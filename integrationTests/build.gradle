@@ -1,0 +1,59 @@
+plugins {
+    id "java"
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
+}
+
+
+group 'com.teachingaura'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+def junitJupiterVersion = '5.4.2'
+
+dependencies {
+    implementation project(':client')
+    implementation project(':model')
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation 'com.google.firebase:firebase-admin:8.1.0'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+    testImplementation "org.testcontainers:testcontainers:1.15.3"
+    testImplementation "org.testcontainers:gcloud:1.15.3"
+    testImplementation "org.testcontainers:junit-jupiter:1.15.3"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Since this library is included as a jar in our jib projects, we want the
+// jar to built reproducibly.
+jar {
+    preserveFileTimestamps false
+    reproducibleFileOrder true
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+

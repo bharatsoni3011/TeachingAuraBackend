@@ -1,0 +1,87 @@
+plugins {
+    id "java"
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
+    id "maven-publish"
+}
+
+group 'com.teachingaura'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+// Since this library is included as a jar in our jib projects, we want the
+// jar to built reproducibly.
+jar {
+    preserveFileTimestamps false
+    reproducibleFileOrder true
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+
+dependencies {
+    implementation project(':model')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation 'com.google.firebase:firebase-admin:8.1.0'
+    // Retrofit + GSON
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-jackson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.teachingaura'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "https://asia-maven.pkg.dev/teachingaura/teachingaura-maven"
+            credentials {
+                username = "_json_key_base64"
+                password = "$artifactRegistryMavenSecret"
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
+repositories {
+    maven {
+        url "https://asia-maven.pkg.dev/teachingaura/teachingaura-maven"
+        credentials {
+            username = "_json_key_base64"
+            password = "$artifactRegistryMavenSecret"
+        }
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
+}

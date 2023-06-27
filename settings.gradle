@@ -1,0 +1,8 @@
+rootProject.name = 'TeachingAuraBackend'
+
+include 'service'
+include 'model'
+include 'client'
+include 'scripts'
+include 'integrationTests'
+

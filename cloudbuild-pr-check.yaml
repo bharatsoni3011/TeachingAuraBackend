@@ -1,0 +1,7 @@
+steps:
+  - name: gradle:6.9-jdk8
+    entrypoint: gradle
+    args:
+      - 'test'
+      - '--info'
+timeout: 15000s

@@ -1,0 +1,1 @@
+ALTER TABLE schedule ADD img_url VARCHAR(255) NULL;

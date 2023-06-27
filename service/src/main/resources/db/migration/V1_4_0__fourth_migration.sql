@@ -1,0 +1,9 @@
+ALTER TABLE study_material ADD subject_id VARCHAR(255) NULL;
+
+ALTER TABLE study_material ADD CONSTRAINT FK_STUDY_MATERIAL_ON_SUBJECT FOREIGN KEY (subject_id) REFERENCES subject (id);
+
+ALTER TABLE study_material ADD batch_id VARCHAR(255) NULL;
+
+ALTER TABLE study_material ADD CONSTRAINT FK_STUDY_MATERIAL_ON_BATCH FOREIGN KEY (batch_id) REFERENCES batch (id);
+
+ALTER TABLE study_material DROP COLUMN course_id;

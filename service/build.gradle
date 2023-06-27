@@ -1,0 +1,237 @@
+//import org.ajoberstar.grgit.Grgit
+
+buildscript {
+
+    repositories {
+        maven {
+            name = 'ajoberstar-backup'
+            url = 'https://ajoberstar.org/bintray-backup/'
+        }
+    }
+
+    dependencies {
+        classpath 'org.ajoberstar:grgit:1.1.0'
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.6.2'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+    id 'com.google.cloud.tools.jib'
+    id "net.ltgt.apt" version "0.19"                    // for Micronaut AOP support
+    id "org.flywaydb.flyway" version "7.14.0"
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
+    id "org.jetbrains.kotlin.plugin.spring" version "1.5.31"
+    id "org.jetbrains.kotlin.plugin.jpa" version "1.5.31"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.5.31"
+    id 'jacoco'
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.Embeddable")
+    annotation("javax.persistence.MappedSuperclass")
+}
+
+ext {
+    // upgrade this also when changing spring boot version
+    set('springCloudVersion', "2021.0.0")
+    set('junit-jupiter.version', "5.4.0")
+
+    // Open the Git repository in the current directory.
+//    git = Grgit.open(file('../.'))
+
+    // Get commit id of HEAD.
+//    revision = git.head().id
+    // Alternative is using abbreviatedId of head() method.
+    // revision = git.head().abbreviatedId
+}
+
+group = 'com.teachingaura'
+//version = "1.0.${git.head().abbreviatedId}"
+version = "1.0"
+sourceCompatibility = '1.8'
+
+
+// Use this to get the currently active profile
+// project.getProperty("args")
+// load app props using this ..
+//def props = new Properties()
+//file('src/main/resources/application.properties').withInputStream {
+//    props.load(it)
+//}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+def junitJupiterVersion = '5.4.2'
+def arrow_version = "1.0.1"
+
+dependencies {
+    implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation project(':model')
+    implementation 'io.github.microutils:kotlin-logging-jvm:2.0.10'
+    implementation "io.arrow-kt:arrow-core:$arrow_version"
+    implementation "io.arrow-kt:arrow-fx-coroutines:$arrow_version"
+    implementation "io.arrow-kt:arrow-fx-stm:$arrow_version"
+
+
+    // Retrofit + GSON
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-jackson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation("com.squareup.okhttp3:logging-interceptor:3.9.0")
+    implementation 'com.auth0:java-jwt:3.18.2'
+
+    implementation 'io.github.microutils:kotlin-logging-jvm:2.0.10'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
+    implementation 'com.google.firebase:firebase-admin:6.15.0'
+    implementation group: 'javax.inject', name: 'javax.inject', version: '1'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    implementation 'com.google.cloud:spring-cloud-gcp-starter-metrics'
+    implementation 'io.micrometer:micrometer-registry-stackdriver'
+    implementation 'com.google.cloud:spring-cloud-gcp-starter'
+//    implementation 'org.springframework.cloud:spring-cloud-gcp-starter-sql-mysql'
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager'
+    implementation 'com.google.cloud:spring-cloud-gcp-security-firebase'
+    //implementation 'com.google.cloud:spring-cloud-gcp-starter-pubsub'
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-storage'
+//    implementation 'com.google.cloud:spring-cloud-gcp-starter-data-datastore'
+    implementation "com.google.cloud:spring-cloud-gcp-starter-data-firestore"
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-logging'
+    implementation 'org.springframework.session:spring-session-core'
+//    implementation 'com.google.cloud.sql:mysql-socket-factory:1.3.1'
+//    implementation 'com.google.http-client:google-http-client:1.38.0'
+    implementation 'com.twilio.sdk:twilio:7.54.0'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java:8.0.26'
+    runtimeOnly 'org.jetbrains.kotlin:kotlin-reflect:1.5.20'
+    implementation 'com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.4.0'
+    implementation 'com.google.http-client:google-http-client:1.39.1'
+    implementation 'com.google.api-client:google-api-client:1.31.2'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test"
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+    testImplementation "org.testcontainers:testcontainers:1.15.3"
+    testImplementation "org.testcontainers:gcloud:1.15.3"
+    testImplementation "org.testcontainers:junit-jupiter:1.15.3"
+    testImplementation "org.springframework.security:spring-security-test"
+    implementation 'org.springframework.boot:spring-boot-starter-validation:2.5.4'
+}
+
+flyway {
+    configFiles = ['flyway.conf']
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "com.google.cloud:spring-cloud-gcp-dependencies:3.1.0"
+    }
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+
+
+
+jib {
+    to {
+        image = "gcr.io/teachingaura/teachingauraservice:${version}"
+    }
+    container {
+        ports = ['8080']
+    }
+}
+// Uncomment this when new container is required
+//tasks.build.dependsOn tasks.jib
+
+// Add tasks for integration tests
+
+sourceSets {
+    integration {
+        java.srcDir "$projectDir/src/integration/java"
+        resources . srcDir "$projectDir/src/integration/resources"
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+configurations {
+    integrationImplementation.extendsFrom testImplementation
+    integrationRuntime.extendsFrom testRuntime
+}
+
+task integrationTest(type: Test) {
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+
+    useJUnitPlatform()
+
+    reports {
+        html.enabled true
+        junitXml.enabled = true
+    }
+}
+//check.dependsOn integrationTest
+
+//task stopTestContainers(type: Exec) {
+//    executable "sh"
+//    args "-c", 'docker ps -q -f "label=org.testcontainers=true" ' +
+//            '| xargs docker rm -f'
+//}
+
+//test.dependsOn stopTestContainers

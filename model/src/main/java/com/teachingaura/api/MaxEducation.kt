@@ -1,0 +1,5 @@
+package com.teachingaura.api
+
+enum class MaxEducation {
+    BELOW_MATRICULATE, MATRICULATE, HIGHER_SECONDARY, UNDERGRADUATE, POST_GRADUATE, OTHER
+}

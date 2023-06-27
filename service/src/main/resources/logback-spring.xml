@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="projectId" value="${projectId:-${GOOGLE_CLOUD_PROJECT}}"/>
+<!--    <include resource="org/springframework/cloud/gcp/autoconfigure/logging/logback-appender.xml" />-->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <springProfile name="qa | staging | prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    <springProfile name="default | dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+<!--            <appender-ref ref="STACKDRIVER"/>-->
+        </root>
+    </springProfile>
+</configuration>

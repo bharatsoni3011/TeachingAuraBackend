@@ -1,0 +1,1 @@
+ALTER TABLE batch ADD image_url VARCHAR(255) NULL;

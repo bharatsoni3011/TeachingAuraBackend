@@ -1,0 +1,40 @@
+steps:
+  - name: gradle:6.9-jdk8
+    entrypoint: gradle
+    args:
+      - 'test'
+      - '--info'
+  - name: gradle:6.9-jdk8
+    entrypoint: gradle
+    args:
+      - 'publish'
+  - name: gradle:6.9-jdk8
+    entrypoint: gradle
+    args:
+      - 'jib'
+      - '--image=gcr.io/${PROJECT_ID}/teachingauraservice:$COMMIT_SHA'
+      - '-x'
+      - 'test'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'beta'
+      - 'run'
+      - 'deploy'
+      - 'staging-teachingauraservice'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/teachingauraservice:$COMMIT_SHA'
+      - '--region'
+      - 'asia-south2'
+      - '--no-cpu-throttling'
+      - '--max-instances'
+      - '1'
+      - '--min-instances'
+      - '1'
+      - '--set-env-vars'
+      - 'SPRING_PROFILES_ACTIVE=staging'
+#images:
+#  - 'gcr.io/$PROJECT_ID/teachingauraservice:$COMMIT_SHA'
+timeout: 15000s
+options:
+  machineType: 'N1_HIGHCPU_8'
